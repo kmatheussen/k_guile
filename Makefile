@@ -65,13 +65,14 @@ pd_linux: $(NAME).pd_linux
 
 LINUXCFLAGS = -DPD -DUNIX -DICECAST -O2 -funroll-loops -fomit-frame-pointer \
     -Wall -W -Wno-shadow -Wstrict-prototypes \
-    -Wno-unused -Wno-parentheses -Wno-switch #-Werror
+    -Wno-unused -Wno-parentheses -Wno-switch -Wno-deprecated-declarations -fPIC #-Werror
 
 LINUXINCLUDEPATH=../../src
-LINUXINCLUDE =  -I$(LINUXINCLUDEPATH)
+#LINUXINCLUDEPATH=/home/kjetil/radium/bin/packages/libpd-master/pure-data/src
+LINUXINCLUDE =  -I$(LINUXINCLUDEPATH) `pkg-config --cflags guile-2.0`
 
 $(NAME).pd_linux: $(NAME).o
-	ld -export_dynamic  -shared -o $(NAME).pd_linux k_guile.o -lc -lm -lguile
+	ld -shared -o $(NAME).pd_linux k_guile.o -lc -lm `pkg-config --libs guile-2.0`
 	strip --strip-unneeded $*.pd_linux
 	rm -f $*.o ../$*.pd_linux
 	ln -s $(DIR)/$*.pd_linux ..
